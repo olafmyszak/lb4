@@ -72,8 +72,7 @@ public class Person {
             e.printStackTrace();
         }
 
-        final Person[] people = result.toArray(new Person[0]);
-        return people;
+        return result.toArray(new Person[0]);
     }
 
     //Zadanie 3a
@@ -123,12 +122,14 @@ public class Person {
     }
 
     //Zadanie 4a
-    public static void toDirectory(String path, Person people[]) {
+    public static void toDirectory(String path, Person[] people) {
         File dir = new File(path);
         if(dir.exists() && dir.isDirectory()) {
             File[] files = dir.listFiles();
-            for(var file: files)
-                file.delete();
+            if (files != null) {
+                for(var file: files)
+                    file.delete();
+            }
         }
         else {
             try {
@@ -146,15 +147,20 @@ public class Person {
     //Zadanie 4b
     public static Person[] fromDirectory(String path) {
         File[] files = new File(path).listFiles();
-        Person[] result = new Person[files.length];
-        for(int i=0; i<files.length; i++) {
-            result[i] = fromFile(files[i].getPath());
+        Person[] result = new Person[0];
+        if (files != null) {
+            result = new Person[files.length];
+        }
+        if (files != null) {
+            for(int i=0; i<files.length; i++) {
+                result[i] = fromFile(files[i].getPath());
+            }
         }
         return result;
     }
 
     //Zadanie 5
-    public static void toBinaryFile(String path, Person people[]) {
+    public static void toBinaryFile(String path, Person[] people) {
         try {
             FileOutputStream fos = new FileOutputStream(path);
             ObjectOutputStream oos = new ObjectOutputStream(fos);

@@ -1,48 +1,16 @@
 package com.company;
 
-
+import com.company.person.DirectoryPersonPersistenceManager;
 import com.company.person.Person;
-
-import java.util.Arrays;
+import com.company.person.PersonPersistenceManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        //zadanie 1
-        Person person = Person.fromFile("zadanie1.txt");
-        System.out.println("Zadanie 1");
-        System.out.println(person);
+        PersonPersistenceManager manager = new DirectoryPersonPersistenceManager();
 
+        Person[] people = manager.load("zadanie4a");
 
-        //Zadanie 2
-        Person[] people = Person.fromCsv("zadanie2.csv");
-        System.out.println("Zadanie 2");
-        System.out.println(Arrays.deepToString(people));
-
-        //Zadanie 3a
-        Person.toFile("zadanie3a.txt",person);
-
-        //Zadanie 3b
-        Person.toCsv("zadanie3b.csv",people);
-
-        //Zadanie 3c
-        Person.sortCsv("zadanie3b.csv");
-
-        //Zadanie 4a
-        Person.toDirectory("zadanie4a", people);
-
-        //Zadanie 4b
-        Person[] parr = Person.fromDirectory("zadanie4a");
-        System.out.println("Zadanie 4b");
-        for(var p:parr)
-            System.out.println(p.toString());
-
-        //Zadanie 5
-        Person.toBinaryFile("zadanie5.bin", parr);
-        Person[] parrOut = Person.fromBinaryFile("zadanie5.bin");
-
-        System.out.println("---5---");
-        for(var p:parrOut)
-            System.out.println(p.toString());
+        manager.save("data", people);
     }
 }

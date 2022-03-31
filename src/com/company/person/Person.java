@@ -1,22 +1,17 @@
 package com.company.person;
 
-
 import java.io.*;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
 
 
 public class Person implements Serializable {
-    private final String name;
-    private final LocalDate birth;
-    private final LocalDate death;
-    private int age;
+    final String name;
+    final LocalDate birth;
+    final LocalDate death;
 
-
-    private Person(String name, LocalDate birth, LocalDate death) {
+    Person(String name, LocalDate birth, LocalDate death) {
         this.name = name;
         this.birth = birth;
         this.death = death;
@@ -47,40 +42,17 @@ public class Person implements Serializable {
             reader.close();
 
         } catch (IOException | NullPointerException | DateTimeParseException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
         return new Person(name, birth, death);
     }
 
-    private static LocalDate parseDate(String str) throws DateTimeParseException, NullPointerException {
+    static LocalDate parseDate(String str) throws DateTimeParseException, NullPointerException {
         return LocalDate.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    private static String parseDate(LocalDate date) {
+    static String parseDate(LocalDate date) {
         return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
-
-    //Zadanie 2
-    public static Person[] fromCsv(String path) {
-        List<Person> result = new ArrayList<>();
-        String line;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(path));
-            while (null != (line = reader.readLine())) {
-                StringTokenizer tokenizer = new StringTokenizer(line, ";");
-                String name = tokenizer.nextToken();
-                LocalDate birth = parseDate(tokenizer.nextToken());
-                LocalDate death = null;
-                if (tokenizer.hasMoreTokens())
-                    death = parseDate(tokenizer.nextToken());
-                result.add(new Person(name, birth, death));
-            }
-            reader.close();
-        } catch (IOException | NullPointerException | DateTimeParseException e) {
-            e.printStackTrace();
-        }
-
-        return result.toArray(new Person[0]);
     }
 
     //Zadanie 3a
@@ -96,72 +68,6 @@ public class Person implements Serializable {
         } catch (IOException | NullPointerException | DateTimeParseException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    //Zadanie 3b
-    public static void toCsv(String path, Person[] people) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            for (Person person : people) {
-                writer.write(person.name);
-                writer.write(';' + parseDate(person.birth));
-                writer.write(";" + (person.death == null ? "" : parseDate(person.death)));
-                writer.newLine();
-            }
-            writer.close();
-        } catch (IOException | NullPointerException | DateTimeParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Zadanie 3c
-    public static void sortCsv(String path) {
-        Person[] people = Person.fromCsv(path);
-        Arrays.sort(people, Comparator.comparing(p -> p.birth));
-        Person.toCsv(path, people);
-    }
-
-    //Zadanie 4a
-    public static void toDirectory(String path, Person[] people) {
-        File dir = new File(path);
-
-        if (dir.exists() && dir.isDirectory()) {
-            for (File file : Objects.requireNonNull(dir.listFiles())) {
-                if (!file.isDirectory()) {
-                    if (!file.delete()) {
-                        System.out.println("Error deleting files");
-                    }
-                }
-            }
-        } else {
-            try {
-                Files.createDirectory(dir.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (Person person : people) {
-            Person.toFile(path + "/" + person.name + ".txt", person);
-        }
-
-    }
-
-    //Zadanie 4b
-    public static Person[] fromDirectory(String path) {
-        File[] files = new File(path).listFiles();
-        Person[] result = new Person[0];
-        if (files != null) {
-            result = new Person[files.length];
-        }
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                result[i] = fromFile(files[i].getPath());
-            }
-        }
-        return result;
     }
 
     //Zadanie 5

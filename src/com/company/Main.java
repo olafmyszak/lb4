@@ -9,25 +9,25 @@ public class Main {
         //zadanie 1
         Person person = Person.fromFile("zadanie1.txt");
         System.out.println("Zadanie 1");
-        System.out.println(person.toString());
+        System.out.println(person);
 
 
         //Zadanie 2
-        Person[] personArr = Person.fromCsv("zadanie2.csv");
+        Person[] people = Person.fromCsv("zadanie2.csv");
         System.out.println("Zadanie 2");
-        System.out.println(Arrays.deepToString(personArr));
+        System.out.println(Arrays.deepToString(people));
 
         //Zadanie 3a
         Person.toFile("zadanie3a.txt",person);
 
         //Zadanie 3b
-        Person.toCsv("zadanie3b.csv",personArr);
+        Person.toCsv("zadanie3b.csv",people);
 
         //Zadanie 3c
         Person.sortCsv("zadanie3b.csv");
 
         //Zadanie 4a
-        Person.toDirectory("zadanie4a", personArr);
+        Person.toDirectory("zadanie4a", people);
 
         //Zadanie 4b
         Person[] parr = Person.fromDirectory("zadanie4a");
@@ -40,7 +40,7 @@ public class Main {
         Person[] parrOut = Person.fromBinaryFile("zadanie5.bin");
 
         System.out.println("---5---");
-        for(var p:parr)
+        for(var p:parrOut)
             System.out.println(p.toString());
     }
 }

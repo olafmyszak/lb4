@@ -9,10 +9,10 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 
-public class Person {
-    private String name;
-    private LocalDate birth, death;
-
+public class Person implements Serializable {
+    private final String name;
+    private final LocalDate birth;
+    private final LocalDate death;
 
 
     private Person(String name, LocalDate birth, LocalDate death) {
@@ -20,6 +20,7 @@ public class Person {
         this.birth = birth;
         this.death = death;
     }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -28,6 +29,7 @@ public class Person {
                 ", death=" + death +
                 '}';
     }
+
     public LocalDate getBirth() {
         return birth;
     }
@@ -44,10 +46,11 @@ public class Person {
             reader.close();
 
         } catch (IOException | NullPointerException | DateTimeParseException e) {
-            e.printStackTrace();
+            //  e.printStackTrace();
         }
         return new Person(name, birth, death);
     }
+
     private static LocalDate parseDate(String str) throws DateTimeParseException, NullPointerException {
         return LocalDate.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
@@ -58,12 +61,12 @@ public class Person {
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
-            while(null != (line = reader.readLine())) {
-                StringTokenizer tokenizer = new StringTokenizer(line,";");
+            while (null != (line = reader.readLine())) {
+                StringTokenizer tokenizer = new StringTokenizer(line, ";");
                 String name = tokenizer.nextToken();
                 LocalDate birth = parseDate(tokenizer.nextToken());
                 LocalDate death = null;
-                if(tokenizer.hasMoreTokens())
+                if (tokenizer.hasMoreTokens())
                     death = parseDate(tokenizer.nextToken());
                 result.add(new Person(name, birth, death));
             }
@@ -79,17 +82,18 @@ public class Person {
     public static void toFile(String path, Person person) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            writer.write(person.name+"\n");
-            writer.write(parseDate(person.birth)+"\n");
-            if(person.death != null) {
-                writer.write(parseDate(person.death)+"\n");
+            writer.write(person.name + "\n");
+            writer.write(parseDate(person.birth) + "\n");
+            if (person.death != null) {
+                writer.write(parseDate(person.death) + "\n");
             }
             writer.close();
         } catch (IOException | NullPointerException | DateTimeParseException e) {
             e.printStackTrace();
         }
     }
-    private static String parseDate(LocalDate date)  {
+
+    private static String parseDate(LocalDate date) {
         return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
@@ -97,10 +101,10 @@ public class Person {
     public static void toCsv(String path, Person[] people) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-            for(Person person : people) {
+            for (Person person : people) {
                 writer.write(person.name);
-                writer.write(';'+parseDate(person.birth));
-                writer.write(";"+(person.death == null? "" : parseDate(person.death)));
+                writer.write(';' + parseDate(person.birth));
+                writer.write(";" + (person.death == null ? "" : parseDate(person.death)));
                 writer.newLine();
             }
             writer.close();
@@ -112,26 +116,23 @@ public class Person {
     //Zadanie 3c
     public static void sortCsv(String path) {
         Person[] people = Person.fromCsv(path);
-        //Arrays.sort(people,Comparator.comparing(Person::getBirth));
-        Arrays.sort(people, new Comparator<Person>(){
-            public int compare(Person p1, Person p2) {
-                return p1.birth.compareTo(p2.birth);
-            }
-        });
+        Arrays.sort(people, Comparator.comparing(p -> p.birth));
         Person.toCsv(path, people);
     }
 
     //Zadanie 4a
     public static void toDirectory(String path, Person[] people) {
         File dir = new File(path);
-        if(dir.exists() && dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for(var file: files)
-                    file.delete();
+
+        if (dir.exists() && dir.isDirectory()) {
+            for (File file : Objects.requireNonNull(dir.listFiles())) {
+                if (!file.isDirectory()) {
+                    if (!file.delete()) {
+                        System.out.println("Error deleting files");
+                    }
+                }
             }
-        }
-        else {
+        } else {
             try {
                 Files.createDirectory(dir.toPath());
             } catch (IOException e) {
@@ -139,9 +140,10 @@ public class Person {
             }
         }
 
-        for(Person person : people) {
-            Person.toFile(path+"/"+person.name+".txt", person);
+        for (Person person : people) {
+            Person.toFile(path + "/" + person.name + ".txt", person);
         }
+
     }
 
     //Zadanie 4b
@@ -152,7 +154,7 @@ public class Person {
             result = new Person[files.length];
         }
         if (files != null) {
-            for(int i=0; i<files.length; i++) {
+            for (int i = 0; i < files.length; i++) {
                 result[i] = fromFile(files[i].getPath());
             }
         }

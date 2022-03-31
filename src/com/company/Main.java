@@ -1,6 +1,8 @@
 package com.company;
 
 
+import com.company.person.Person;
+
 import java.util.Arrays;
 
 public class Main {

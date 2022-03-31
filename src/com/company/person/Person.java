@@ -1,4 +1,4 @@
-package com.company;
+package com.company.person;
 
 
 import java.io.*;
@@ -13,6 +13,7 @@ public class Person implements Serializable {
     private final String name;
     private final LocalDate birth;
     private final LocalDate death;
+    private int age;
 
 
     private Person(String name, LocalDate birth, LocalDate death) {
@@ -46,13 +47,17 @@ public class Person implements Serializable {
             reader.close();
 
         } catch (IOException | NullPointerException | DateTimeParseException e) {
-            //  e.printStackTrace();
+            e.printStackTrace();
         }
         return new Person(name, birth, death);
     }
 
     private static LocalDate parseDate(String str) throws DateTimeParseException, NullPointerException {
         return LocalDate.parse(str, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    private static String parseDate(LocalDate date) {
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     //Zadanie 2
@@ -93,9 +98,7 @@ public class Person implements Serializable {
         }
     }
 
-    private static String parseDate(LocalDate date) {
-        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-    }
+
 
     //Zadanie 3b
     public static void toCsv(String path, Person[] people) {
